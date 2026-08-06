@@ -1,0 +1,255 @@
+---
+import SectionHeading from "../components/content/section-heading.astro";
+import Footer from "../components/shell/footer.astro";
+import PageHeader from "../components/shell/page-header.tsx";
+import PageTitle from "../components/shell/page-title.astro";
+import Layout from "../layouts/Layout.astro";
+
+// Pinned to the production origin so the tag is correct in every build target.
+// Mirrors the fallback used by src/pages/robots.txt.ts.
+const siteOrigin = Astro.site?.origin ?? "https://www.augur.net";
+const canonicalURL = new URL("/rep/", siteOrigin).href;
+
+const published = { iso: "2026-08-05", display: "5 August 2026" };
+const lastUpdated = { iso: "2026-08-05", display: "5 August 2026" };
+
+const etherscanToken = (address: string) =>
+	`https://etherscan.io/token/${address}`;
+
+const repToken = {
+	name: "Reputation",
+	symbol: "REPv2_Yes_1",
+	chain: "Ethereum mainnet (chain ID 1)",
+	address: "0xCf6A0A7826fa124B7705d6f3c675eAD76f1e540D",
+	decimals: "18",
+	// TODO(publish): re-read totalSupply() at publish time and update all three
+	// fields together. Recorded from an on-chain read on 5 August 2026.
+	totalSupply: "6,545,760.433666705 REP",
+	totalSupplyRaw: "6545760433666705616389974",
+	totalSupplyReadOn: { iso: "2026-08-05", display: "5 August 2026" },
+};
+
+
+interface ContextLink {
+	label: string;
+	href: string;
+	note?: string;
+	external?: boolean;
+}
+
+const contextLinks: { heading: string; items: ContextLink[] }[] = [
+	{
+		heading: "Markets",
+		items: [
+			{
+				label: "Kraken — AUGUR/USD",
+				href: "https://pro.kraken.com/app/trade/AUGUR-USD",
+				external: true,
+			},
+			{
+				label: "Uniswap — REP on Ethereum",
+				href: `https://app.uniswap.org/explore/tokens/ethereum/${repToken.address.toLowerCase()}`,
+				external: true,
+			},
+		],
+	},
+	{
+		heading: "Exchange notices",
+		items: [
+			{
+				label: "Kraken — Augur (REP) migration",
+				href: "https://support.kraken.com/articles/augur-migration",
+				external: true,
+			},
+		],
+	},
+	{
+		heading: "From the Augur blog",
+		items: [
+			{
+				label: "The Augur Fork is Here",
+				href: "/blog/the-augur-fork-is-here/",
+				note: "fork announcement",
+			},
+			{
+				label: "Phase 2: The Fork Migration",
+				href: "/blog/phase-2-the-fork-migration/",
+				note: "how the migration worked",
+			},
+			{
+				label: "The Augur Moon Fork Is Complete",
+				href: "/blog/post-fork-announcements/",
+				note: "outcome and what comes next",
+			},
+		],
+	},
+];
+
+const dtClass =
+	"font-display uppercase tracking-wide text-muted-foreground sm:py-1";
+const ddClass = "mb-4 sm:mb-0 sm:py-1";
+const linkClass =
+	"text-primary hover:text-loud-foreground hover:underline focus:underline";
+---
+
+<Layout
+  title="REP Token Contract Reference | Augur"
+  description="The current REP token contract on Ethereum mainnet after the Augur Moon Fork."
+  canonicalURL={canonicalURL}
+  keywords={[
+    "REP token contract",
+    "REP contract address",
+    "REPv2_Yes_1",
+    "augur REP",
+    "augur moon fork",
+    "current REP",
+    "ethereum mainnet",
+    "token contract reference"
+  ]}
+>
+  <div class="grid grid-rows-[auto_1fr_auto] min-h-screen">
+    <!-- Top Section: Navigation -->
+    <PageHeader client:load backHref="/" />
+
+    <!-- Middle Section: Content -->
+    <main class="overflow-y-auto px-4 md:px-8 pt-8 mb-12">
+      <div class="max-w-3xl mx-auto">
+
+        <PageTitle prefix="REP" title="TOKEN CONTRACT REFERENCE" class="mb-6" />
+
+        <!-- TODO(temporary): remove once the CoinGecko listing is updated -->
+        <div class="border border-loud-foreground/40 bg-loud-foreground/5 px-6 py-3 mb-4 text-sm normal-case text-center">
+          <span class="font-display uppercase tracking-wide text-loud-foreground">Temporary notice · {lastUpdated.display}</span>
+          <span class="text-muted-foreground"> — The Lituus Foundation confirms it is currently reaching out to CoinGecko to update the REP token listing. This page is the official reference for that request.</span>
+        </div>
+
+        <div class="border border-primary/40 bg-primary/5 p-6 mb-8 text-sm normal-case">
+          <p class="font-display uppercase tracking-wide text-loud-foreground mb-3">
+            Notice for token verification reviewers
+          </p>
+          <p class="text-muted-foreground">
+            Following the Augur Moon Fork, completed 3 August 2026, the Lituus Foundation is requesting that token listings and price trackers for REP be updated. The current REP token is the contract of the winning child universe,
+            <span class="select-all break-all text-loud-foreground">{repToken.address}</span>
+            (symbol <span class="select-all">{repToken.symbol}</span>). The earlier REPv2 and REPv1 contracts are now legacy contracts. This page is the citable reference for that change.
+          </p>
+        </div>
+
+        <p class="text-center normal-case leading-tight text-foreground mb-4 mx-auto max-w-xl">
+          Maintained by the
+          <span class="text-loud-foreground">Lituus Foundation</span>
+          so that exchanges, wallets, aggregators, and block explorers can confirm which REP contract is current.
+        </p>
+
+        <p class="text-center text-sm text-muted-foreground mb-12">
+          Published <time datetime={published.iso}>{published.display}</time>
+          <span class="mx-2">//</span>
+          Last updated <time datetime={lastUpdated.iso}>{lastUpdated.display}</time>
+        </p>
+
+        <!-- CURRENT TOKEN -->
+        <SectionHeading text="Current token" />
+        <p class="mb-6">
+          This is the REP token of the winning child universe created by the fork. Augur development continues on this contract.
+        </p>
+
+        <div class="border border-primary/40 bg-primary/5 p-6 mb-12">
+          <dl class="grid grid-cols-1 sm:grid-cols-[minmax(9rem,max-content)_1fr] gap-x-6 text-sm">
+            <dt class={dtClass}>Name</dt>
+            <dd class={ddClass}>{repToken.name}</dd>
+
+            <dt class={dtClass}>Symbol</dt>
+            <dd class={ddClass}>
+              <span class="select-all">{repToken.symbol}</span>
+            </dd>
+
+            <dt class={dtClass}>Chain</dt>
+            <dd class={ddClass}>{repToken.chain}</dd>
+
+            <dt class={dtClass}>Contract address</dt>
+            <dd class={ddClass}>
+              <span class="select-all break-all text-loud-foreground">{repToken.address}</span>
+            </dd>
+
+            <dt class={dtClass}>Decimals</dt>
+            <dd class={ddClass}>{repToken.decimals}</dd>
+
+            <dt class={dtClass}>Total supply</dt>
+            <dd class={ddClass}>
+              <span class="text-loud-foreground">{repToken.totalSupply}</span>
+              <span class="block text-muted-foreground">
+                Raw value <span class="select-all break-all">{repToken.totalSupplyRaw}</span>
+              </span>
+              <span class="block text-muted-foreground">
+                Read on <time datetime={repToken.totalSupplyReadOn.iso}>{repToken.totalSupplyReadOn.display}</time>.
+              </span>
+            </dd>
+
+            <dt class={dtClass}>Etherscan</dt>
+            <dd class={ddClass}>
+              <a
+                class={linkClass}
+                href={etherscanToken(repToken.address)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View the token on Etherscan ↗
+              </a>
+            </dd>
+          </dl>
+        </div>
+
+        <!-- CONTEXT -->
+        <SectionHeading text="Context" />
+        <div class="border border-foreground/30 p-6 mb-12 text-sm">
+          {contextLinks.map((group, index) => (
+            <>
+              <h3 class:list={["font-display uppercase tracking-wide text-muted-foreground mb-3", { "mt-6": index > 0 }]}>
+                {group.heading}
+              </h3>
+              <ul class="space-y-2">
+                {group.items.map((item) => (
+                  <li>
+                    <a
+                      class={linkClass}
+                      href={item.href}
+                      target={item.external ? "_blank" : undefined}
+                      rel={item.external ? "noopener noreferrer" : undefined}
+                    >
+                      {item.label}{item.external && " ↗"}
+                    </a>
+                    {item.note && <span class="text-muted-foreground"> — {item.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ))}
+        </div>
+
+        <!-- CONTACT -->
+        <SectionHeading text="Contact" />
+        <div class="border border-foreground/30 p-6 text-center">
+          <p class="mb-4">
+            For listing corrections, token metadata updates, or questions about anything on this page, reach the Lituus Foundation through the channels below.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4 text-sm">
+            <a href="https://discord.gg/Y3tCZsSmz3" class="text-loud-foreground hover:text-primary transition-colors">
+              DISCORD
+            </a>
+            <span class="text-muted-foreground">•</span>
+            <a href="https://t.me/augurlituus" class="text-loud-foreground hover:text-primary transition-colors">
+              TELEGRAM
+            </a>
+            <span class="text-muted-foreground">•</span>
+            <a href="https://x.com/AugurProject" class="text-loud-foreground hover:text-primary transition-colors">
+              X.COM
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Bottom Section: Footer -->
+    <Footer />
+  </div>
+</Layout>
